@@ -1,0 +1,33 @@
+[
+  {
+    "username": "alice99",
+    "userImageString": "human1",
+    "lastMessage": "See you tomorrow!",
+    "id": 1
+  },
+  {
+    "username": "bob_dev",
+    "userImageString": "human2",
+    "lastMessage": "Let’s fix that bug later",
+    "id": 2
+  },
+  {
+    "username": "carla_m",
+    "userImageString": "human3",
+    "lastMessage": "Awesome, thanks!",
+    "id": 3
+  },
+  {
+    "username": "danielX",
+    "userImageString": "human4",
+    "lastMessage": "Where are you now?",
+    "id": 4
+  },
+  {
+      "username": "dashka_123",
+      "userImageString": "human9",
+      "lastMessage": "Hello",
+      "id": 10
+  }
+]
+
