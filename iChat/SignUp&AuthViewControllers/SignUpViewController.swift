@@ -22,13 +22,19 @@ class SignUpViewController: UIViewController {
     
     let alreadyOnboardLabel = UILabel(text: "Already onboard?", font: .openSans16())
     
-    let loginButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Login", for: .normal)
-        button.titleLabel?.font = .openSans16()
-        button.setTitleColor(.redButton(), for: .normal)
-        return button
-    } ()
+    lazy var loginButton: UIButton = {
+        $0.setTitle("Login", for: .normal)
+        $0.titleLabel?.font = .openSans16()
+        $0.setTitleColor(.redButton(), for: .normal)
+        return $0
+    } (UIButton(primaryAction: loginButtonTapped))
+    
+    lazy var loginButtonTapped: UIAction = UIAction { [weak self] _ in
+        let vc = WelcomeBackViewController()
+        vc.isModalInPresentation = true
+        vc.modalPresentationStyle = .fullScreen
+        self?.present(vc, animated: true)
+    }
     
     
     
@@ -40,6 +46,9 @@ class SignUpViewController: UIViewController {
         view.backgroundColor = .white
         setupView()
         buttonTargets()
+    }
+    deinit {
+        print("\(type(of: self)) deinitialized")
     }
     
     private func setupView() {
@@ -84,7 +93,7 @@ class SignUpViewController: UIViewController {
         self.signUpButton.addTarget(self, action: #selector(signUpButtonTapped), for: .touchUpInside)
         
         
-        self.loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+       // self.loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
     }
     
     
@@ -112,21 +121,18 @@ class SignUpViewController: UIViewController {
                     
                 case .failure(let error):
                     AlertManager.showAlert(on: self, title: "Error", message: error.localizedDescription)
-                    
-                    self.emailLine.text = ""
-                    self.passwordLine.text = ""
-                    self.confirmPasswordLine.text = ""
                 }
             }
         }
     }
-    @objc func loginButtonTapped() {
+    /* @objc func loginButtonTapped() {
         
         let vc = WelcomeBackViewController()
         vc.isModalInPresentation = true
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
     }
+    */
 
 }
 

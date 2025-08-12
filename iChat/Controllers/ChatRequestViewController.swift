@@ -25,7 +25,7 @@ class ChatRequestViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .blue
+        view.backgroundColor = .systemBackground
         setupBottomSheet()
         setupFriendImage()
         

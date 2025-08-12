@@ -22,10 +22,20 @@ class SetUpProfileViewController: UIViewController {
     let aboutMeTF = TextFieldLine(font: .avenir20(), typeTF: .username)
     
     let goChatsButton = UIButton(title: "Go to chats!", titleColor: .white, backgroundColor: .darkButton(), cornerRadius: 4)
-    let segmentedControl = UISegmentedControl(items: ["Male", "Female"])
+    let segmentedControlSex = UISegmentedControl(items: ["Male", "Female"])
     let genderLabel = UILabel(text: "Sex")
     
     
+    private let currentUser: User
+    
+    init(currentUser: User) {
+        self.currentUser = currentUser
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     
     let profileImage: UIImageView = {
@@ -45,14 +55,12 @@ class SetUpProfileViewController: UIViewController {
         return button
     }()
     
-    let logoutButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Logout", for: .normal)
-        button.titleLabel?.font = .openSans16()
-        button.setTitleColor(.redButton(), for: .normal)
-        
-        return button
-    } ()
+    lazy var logoutButton: UIButton = {
+        $0.setTitle("Logout", for: .normal)
+        $0.titleLabel?.font = .openSans16()
+        $0.setTitleColor(.redButton(), for: .normal)
+        return $0
+    } (UIButton())
     
     
     override func viewDidLoad() {
@@ -63,6 +71,8 @@ class SetUpProfileViewController: UIViewController {
         setupView()
         buttonTargets()
     }
+    
+    
     
 }
 
@@ -75,7 +85,7 @@ extension SetUpProfileViewController {
         
         let fullNameStackView = UIStackView(arrangedSubviews: [fullNameLabel, fullNameTF], axis: .vertical, spacing: 0)
         let aboutMeStackView = UIStackView(arrangedSubviews: [aboutMeLabel, aboutMeTF], axis: .vertical, spacing: 0)
-        let segmentedStackView = UIStackView(arrangedSubviews: [genderLabel, segmentedControl], axis: .vertical, spacing: 11)
+        let segmentedStackView = UIStackView(arrangedSubviews: [genderLabel, segmentedControlSex], axis: .vertical, spacing: 11)
         
         view.addSubview(setUpProfileLabel)
         view.addSubview(profilePhoto)
@@ -149,9 +159,28 @@ extension SetUpProfileViewController {
     }
     @objc func tappedGoToChats() {
         
-        let tabBar = MainTabBarController()
-        tabBar.modalPresentationStyle = .fullScreen
-        present(tabBar, animated: true)
+        
+        
+        FirebaseStorage.shared.saveProfileWith(id: currentUser.uid, email: currentUser.email!, fullName: fullNameTF.text , avatarImage: "nil", description: aboutMeTF.text, sex: segmentedControlSex.titleForSegment(at: segmentedControlSex.selectedSegmentIndex)) { result in
+            switch result {
+            case .success(_):
+                
+                AlertManager.successfulAlert(on: self) {
+                    
+                    let tabBar = MainTabBarController()
+                    let navVC = UINavigationController(rootViewController: tabBar)
+                    navVC.modalPresentationStyle = .fullScreen
+                    self.present(navVC, animated: true)
+                }
+                
+                
+            case .failure(let error):
+                AlertManager.showAlert(on: self, title: "Error", message: error.localizedDescription)
+            }
+            
+        }
+        
+        
         
     }
     
@@ -177,7 +206,7 @@ extension SetUpProfileViewController {
     
 }
 
-
+/*
 
 import SwiftUI
 import FirebaseAuth
@@ -192,11 +221,11 @@ struct SetUpVCProvider: PreviewProvider {
     struct ContainerView: UIViewControllerRepresentable {
         
         func makeUIViewController(context: UIViewControllerRepresentableContext<SetUpVCProvider.ContainerView>) -> SetUpProfileViewController {
-            return SetUpProfileViewController()
+            return SetUpProfileViewController(currentUser: Auth.auth().currentUser!)
         }
         func updateUIViewController(_ uiViewController: SetUpVCProvider.ContainerView.UIViewControllerType, context: UIViewControllerRepresentableContext<SetUpVCProvider.ContainerView>) {
         }
     }
 }
 
-
+*/

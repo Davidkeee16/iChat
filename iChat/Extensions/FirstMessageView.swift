@@ -9,19 +9,11 @@ import UIKit
 
 
 class FirstMessageView: UIView {
-    
-    
-    
-    
     private let username: UILabel
     private let friendHobby: UILabel
     private let sendMessageTF: UITextField
     
-    
-    
     init(username: UILabel, friendHobby: UILabel, sendMessageTF: UITextField) {
-        
-        
         self.username = username
         self.friendHobby = friendHobby
         self.sendMessageTF = sendMessageTF

@@ -46,6 +46,7 @@ class WelcomeBackViewController: UIViewController {
         setupView()
         buttonTargets()
     }
+    
 }
 
 extension WelcomeBackViewController {
@@ -151,17 +152,18 @@ extension WelcomeBackViewController {
         guard let email = self.emailTextField.text, !email.isEmpty else { return AlertManager.showAlert(on: self, title: "Invalid Email", message: "Please enter your email") }
         guard let password = self.passwordTextField.text, !password.isEmpty else { return AlertManager.showAlert(on: self, title: "Invalid Password", message: "Enter your password") }
         
+        
+        
         let userLogin = LoginUserRequest(email: email, password: password)
         
         AuthService.shared.signIn(with: userLogin) { error in
             if error is Error {
                 AlertManager.showInavlidPasswordOrEmail(on: self)
             } else {
-                let vc = SetUpProfileViewController()
-                let nav = UINavigationController(rootViewController: vc)
-                nav.isModalInPresentation = true
-                nav.modalPresentationStyle = .fullScreen
-                self.present(nav, animated: true)
+                let vc = SetUpProfileViewController(currentUser: Auth.auth().currentUser!)
+                vc.isModalInPresentation = true
+                vc.modalPresentationStyle = .fullScreen
+                self.present(vc, animated: true)
             }}
         
         
@@ -171,6 +173,7 @@ extension WelcomeBackViewController {
 
 
 import SwiftUI
+import FirebaseAuth
 
 
 struct WelcomeBackVCProvider: PreviewProvider {

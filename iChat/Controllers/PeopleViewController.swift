@@ -11,8 +11,8 @@ import UIKit
 
 class PeopleViewController: UIViewController {
     
-    let users = Bundle.main.decode([MUser].self, from: "nearbyPeople.json")
-    
+    // let users = Bundle.main.decode([MUser].self, from: "nearbyPeople.json")
+    let users: [MUser] = [] // Заглушка
     var collectionView: UICollectionView!
     var dataSource:
     UICollectionViewDiffableDataSource<SectionUser, MUser>!
@@ -29,7 +29,11 @@ class PeopleViewController: UIViewController {
         
     }
     
-    
+    lazy var gearshapeTapped: UIAction = UIAction { [weak self] _ in
+        
+        let vc = SetUpProfileViewController(currentUser: Auth.auth().currentUser!)
+        self?.navigationController?.pushViewController(vc, animated: true)
+    }
     
     
    
@@ -38,7 +42,7 @@ class PeopleViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .orange
-        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "gearshape"), primaryAction: gearshapeTapped)
         setupCollectionView()
         searchBarSetup()
         configureDataSource()
@@ -225,6 +229,7 @@ extension PeopleViewController: UISearchBarDelegate {
 
 
 import SwiftUI
+import FirebaseAuth
 
 struct PeopleVCProvider: PreviewProvider {
     

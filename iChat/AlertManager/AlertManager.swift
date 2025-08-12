@@ -24,6 +24,14 @@ class AlertManager {
     static func showAlert(on viewController: UIViewController, title: String, message: String) {
         self.showBasicAlert(on: viewController, title: title, message: message)
     }
+    static func successfulAlert(on viewController: UIViewController, completion: (() -> Void)?) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Succesful", message: "Your information updated", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+                completion?()
+            })
+        }
+    }
     
     
 }
@@ -42,6 +50,9 @@ extension AlertManager {
     static func registrationError(on viewController: UIViewController) {
         self.showBasicAlert(on: viewController, title: "Wrong email", message: "User with this email registered!")
     }
+    
+    
+    
 }
 
 
