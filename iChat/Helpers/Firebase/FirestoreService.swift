@@ -7,13 +7,16 @@
 import FirebaseAuth
 import FirebaseFirestore
 
-class FirebaseStorage {
-    static let shared = FirebaseStorage()
+class FirestoreService {
+    static let shared = FirestoreService()
     
     let db = Firestore.firestore()
     
     private var usersRef: CollectionReference {
         return db.collection("users")
+    }
+    func getUserData(user: User, completion: @escaping (Result<MUser, Error>) -> Void) {
+        
     }
     
     func saveProfileWith(id: String, email: String, fullName: String?, avatarImage: String?, description: String?, sex: String?, completion: @escaping(Result<MUser, Error>) -> Void) {

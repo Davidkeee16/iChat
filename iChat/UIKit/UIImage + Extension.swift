@@ -1,30 +1,32 @@
 //
 //  UIImage + Extension.swift
-//  iChatHomework
+//  iChat
 //
-//  Created by David Puksanskis on 17/06/2025.
+//  Created by David Puksanskis on 13/08/2025.
 //
 
-import Foundation
 import UIKit
 
-
-extension UIImageView {
+extension UIImage {
     
-    convenience init(image: UIImage?, contentMode: ContentMode) {
+    var scaledToSafeUploadSize: UIImage? {
+        let maxImageSideLength: CGFloat = 480
         
-        self.init()
-        self.image = image
-        self.contentMode = contentMode
+        let largerSide: CGFloat = max(size.width, size.height)
+        let ratioScale: CGFloat = largerSide > maxImageSideLength ? largerSide / maxImageSideLength : 1
+        let newImageSize = CGSize(width: size.width / ratioScale, height: size.height / ratioScale)
+        
+        return image(scaledTo: newImageSize)
+    }
+    
+    func image(scaledTo size: CGSize) -> UIImage? {
+        defer {
+            UIGraphicsEndImageContext()
+        }
+        
+        UIGraphicsBeginImageContextWithOptions(size, true, 0)
+        draw(in: CGRect(origin: .zero, size: size))
+        
+        return UIGraphicsGetImageFromCurrentImageContext()
     }
 }
-    
-extension UIImageView {
-    
-    func setupColor(color: UIColor) {
-        let templateImage = self.image?.withRenderingMode(.alwaysTemplate)
-        self.image = templateImage
-        self.tintColor = color
-    }
-}
-    
