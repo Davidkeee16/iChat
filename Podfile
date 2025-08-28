@@ -10,6 +10,10 @@ target 'iChat' do
   pod 'FirebaseAuth'
   pod 'FirebaseCore'
   pod 'FirebaseFirestore'
-  pod 'FirebaseStorage' 
-
+  pod 'FirebaseStorage'
+  pod 'GoogleSignIn'
+  pod 'SDWebImage', '~> 5.0'
+  pod 'GoogleUtilities'
+  pod 'FirebaseCoreInternal'
+  pod 'MessageKit'  
 end

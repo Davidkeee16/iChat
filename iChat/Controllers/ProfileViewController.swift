@@ -18,7 +18,19 @@ class ProfileViewController: UIViewController {
     
     
     
+    private let user: MUser
     
+    init(user: MUser) {
+        self.user = user
+        self.nameLabel.text = user.username
+        self.aboutMeLabel.text = user.userInfo
+        self.imageView.sd_setImage(with: URL(string: user.avatarStringURL))
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,10 +38,6 @@ class ProfileViewController: UIViewController {
         view.backgroundColor = .systemBlue
         customizeElements()
         setupConstraints()
-        
-        
-        
-        
     }
     private func customizeElements() {
         
@@ -50,11 +58,25 @@ class ProfileViewController: UIViewController {
         
     }
     @objc private func sendMessage() {
-        
         print(#function)
+        
+        guard let message = myTextField.text, message != "" else { return }
+        
+        self.dismiss(animated: true) {
+            FirestoreService.shared.createWaitingChats(message: message, receiver: self.user) { result in
+                switch result {
+                case .success:
+                    if let topVC = UIApplication.getTopViewController() {
+                        AlertManager.showAlert(on: topVC, title: "Successful", message: "Message send to \(self.user.username)")
+                    }
+                case .failure(let error):
+                    if let topVC = UIApplication.getTopViewController() {
+                        AlertManager.showAlert(on: topVC, title: "Error", message: "Message not send, \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
     }
-    
-    
     
     private func setupConstraints() {
         view.addSubview(imageView)
@@ -94,15 +116,7 @@ class ProfileViewController: UIViewController {
             myTextField.heightAnchor.constraint(equalToConstant: 48)
             
         ])
-        
     }
-    
-   
-        
-        
-        
-        
-        
   }
 
 
@@ -121,7 +135,7 @@ struct FirstMessageVCProvider: PreviewProvider {
     struct ContainerView: UIViewControllerRepresentable {
         
         func makeUIViewController(context: UIViewControllerRepresentableContext<FirstMessageVCProvider.ContainerView>) -> ProfileViewController {
-            return ProfileViewController()
+            return ProfileViewController(user: userExample)
         }
         func updateUIViewController(_ uiViewController: FirstMessageVCProvider.ContainerView.UIViewControllerType, context: UIViewControllerRepresentableContext<FirstMessageVCProvider.ContainerView>) {
         }

@@ -22,11 +22,11 @@ class Validator {
               password != "", email != "" else { return false }
         return true
     }
-    static func isFilledProfile(fullName: String?, userInfo: String?, sex: String?) -> Bool {
-        guard let fullName = fullName,
+    static func isFilledProfile(username: String?, userInfo: String?, sex: String?) -> Bool {
+        guard let username = username,
               let userInfo = userInfo,
               let sex = sex,
-              fullName != "", userInfo != "", sex != "" else { return false }
+              username != "", userInfo != "", sex != "" else { return false }
         return true
     }
 }

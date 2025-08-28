@@ -16,6 +16,5 @@ extension UISegmentedControl {
         for (index, item) in items.enumerated() {
             self.insertSegment(withTitle: item, at: index, animated: false)
         }
-        
     }
 }

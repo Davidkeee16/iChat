@@ -6,14 +6,14 @@
 //
 
 import UIKit
+import SDWebImage
 
 
 
 class ActiveChatCell: UICollectionViewCell, SelfConfiguringCell {
     
     static var reuseId: String = "ActiveChatCell"
-    
-    
+
     let friendImageView = UIImageView()
     let friendName = UILabel(text: "User name")
     let lastMessage = UILabel(text: "How are you?")
@@ -23,25 +23,34 @@ class ActiveChatCell: UICollectionViewCell, SelfConfiguringCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = .white
-        
+        backgroundColor = .mainWhite()
         setupConstraints()
-        
-        
+    
         self.layer.cornerRadius = 4
         self.clipsToBounds = true
         
     }
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        friendImageView.sd_cancelCurrentImageLoad()
+        friendImageView.image = UIImage(named: "ProfileImageAdd")
     
-    func configure(with value: Any) {
+    }
+    
+    func configure<U>(with value: U) where U: Hashable {
+        guard let chat: MChat = value as? MChat else { return }
+        guard let url = URL(string: chat.friendAvatarStringURL) else { friendImageView.image = UIImage(named: "ProfileImageAdd")
+        return }
         
-        
-            
-        guard let chat = value as? MChat else { return }
-            
-            friendImageView.image = UIImage(named: chat.userImageString)
-            friendName.text = chat.username
-            lastMessage.text = chat.lastMessage
+        friendImageView.sd_setImage(with: url,
+        placeholderImage: UIImage(named: "ProfileImageAdd"),
+        options: [.retryFailed, .continueInBackground, .scaleDownLargeImages, .refreshCached]) { [weak self] _, error, _, _ in
+            if let error = error {
+                print("Avatar load failed (\(chat.friendUsername)): \(error.localizedDescription)")
+            }
+        }
+        friendName.text = chat.friendUsername
+        lastMessage.text = chat.lastMessageContent
         
     }
     
@@ -50,8 +59,6 @@ class ActiveChatCell: UICollectionViewCell, SelfConfiguringCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
-
 
 extension ActiveChatCell {
     
@@ -62,12 +69,8 @@ extension ActiveChatCell {
         lastMessage.translatesAutoresizingMaskIntoConstraints = false
         gradientView.translatesAutoresizingMaskIntoConstraints = false
         
-        
-        
         friendImageView.backgroundColor = .orange
         gradientView.backgroundColor = .black
-        
-        
         
         addSubview(friendImageView)
         addSubview(friendName)

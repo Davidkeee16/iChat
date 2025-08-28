@@ -18,7 +18,7 @@ class NearbyPeopleCell: UICollectionViewCell, SelfConfiguringCell {
     let containerView = UIView()
     
     
-    func configure(with value: Any) {
+    func configure<U>(with value: U) {
         
         guard let people = value as? MUser else { return }
         

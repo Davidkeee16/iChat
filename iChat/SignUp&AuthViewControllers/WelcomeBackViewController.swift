@@ -5,7 +5,7 @@
 //  Created by David Puksanskis on 29/06/2025.
 //
 
-
+import Foundation
 import UIKit
 
 
@@ -35,9 +35,6 @@ class WelcomeBackViewController: UIViewController {
         button.titleLabel?.font = .openSans16()
         return button
     }()
-    
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -126,9 +123,6 @@ extension WelcomeBackViewController {
             bottomStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40),
             
         ])
-        
-
-    
     }
     
     // MARK: Targets
@@ -152,21 +146,21 @@ extension WelcomeBackViewController {
         guard let email = self.emailTextField.text, !email.isEmpty else { return AlertManager.showAlert(on: self, title: "Invalid Email", message: "Please enter your email") }
         guard let password = self.passwordTextField.text, !password.isEmpty else { return AlertManager.showAlert(on: self, title: "Invalid Password", message: "Enter your password") }
         
-        
-        
         let userLogin = LoginUserRequest(email: email, password: password)
         
-        AuthService.shared.signIn(with: userLogin) { error in
-            if error is Error {
-                AlertManager.showInavlidPasswordOrEmail(on: self)
-            } else {
-                let vc = SetUpProfileViewController(currentUser: Auth.auth().currentUser!)
-                vc.isModalInPresentation = true
-                vc.modalPresentationStyle = .fullScreen
-                self.present(vc, animated: true)
-            }}
-        
-        
+        AuthService.shared.signIn(with: userLogin) { [weak self] error in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                if error is Error {
+                    AlertManager.showInavlidPasswordOrEmail(on: self)
+                    return
+                } else {
+                    let vc = SetUpProfileViewController(currentUser: Auth.auth().currentUser!)
+                    vc.modalPresentationStyle = .fullScreen
+                    self.present(vc, animated: true)
+                }
+            }
+        }
     }
 }
 

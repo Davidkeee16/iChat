@@ -5,8 +5,12 @@
 //  Created by David Puksanskis on 16/06/2025.
 //
 
+import FirebaseAuth
+import FirebaseStorage
 import UIKit
 import FirebaseCore
+import SDWebImage
+
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {

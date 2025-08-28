@@ -44,8 +44,6 @@ class AuthService {
                     }
                 }
         }
-        
-        
     }
     
     func signIn(with userRequest: LoginUserRequest, completion: @escaping (Result<User, Error>) -> Void) {
@@ -60,7 +58,6 @@ class AuthService {
             
             completion(.success(result.user))
         }
-        
     }
     func signOut(completion: @escaping (Error?)-> Void) {
         do {

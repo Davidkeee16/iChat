@@ -5,28 +5,30 @@
 //  Created by David Puksanskis on 01/07/2025.
 //
 
-import Foundation
+import FirebaseAuth
+import FirebaseFirestore
+import SDWebImage
 import UIKit
 
 
 class PeopleViewController: UIViewController {
     
-    // let users = Bundle.main.decode([MUser].self, from: "nearbyPeople.json")
-    let users: [MUser] = [] // Заглушка
+    
+    var users = [MUser]()
+    private var usersListener: ListenerRegistration?
+    
     var collectionView: UICollectionView!
     var dataSource:
     UICollectionViewDiffableDataSource<SectionUser, MUser>!
     
     enum SectionUser: Int, CaseIterable {
         case users
-        
         func description(userCount: Int) -> String {
             switch self {
             case .users:
-                return "\(userCount) people Nearby"
+                return "\(userCount) people nearby"
             }
         }
-        
     }
     
     lazy var gearshapeTapped: UIAction = UIAction { [weak self] _ in
@@ -35,20 +37,41 @@ class PeopleViewController: UIViewController {
         self?.navigationController?.pushViewController(vc, animated: true)
     }
     
-    
-   
    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .orange
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "gearshape"), primaryAction: gearshapeTapped)
-        setupCollectionView()
-        searchBarSetup()
-        configureDataSource()
-        reloadData(with: nil)
         
-      
+        searchBarSetup()
+        setupCollectionView()
+        configureDataSource()
+        
+        usersListener = ListenerService.shared.usersObserve(users: users) { result in
+            switch result {
+            case .success(let users):
+                self.users = users
+                self.reloadData(with: nil)
+            case .failure(let error):
+                AlertManager.showAlert(on: self, title: "Error", message: error.localizedDescription)
+            }
+        }
+    }
+    
+    private let currentUser: MUser
+    
+    init(currentUser: MUser) {
+        self.currentUser = currentUser
+        super.init(nibName: nil, bundle: nil)
+        title = currentUser.username
+    }
+    deinit {
+        usersListener?.remove()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func reloadData(with searchText: String?, animatingDifferences: Bool = true) {
@@ -67,14 +90,6 @@ class PeopleViewController: UIViewController {
         
     
     }
-    func configure<T: SelfConfiguringCell>(cellType: T.Type, with value: MUser, for indexPath: IndexPath) -> T {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellType.reuseId, for: indexPath) as? T else { fatalError("Unknow cell")
-        }
-        cell.configure(with: value)
-        
-        return cell
-    }
-    
     
     private func configureDataSource() {
         
@@ -85,7 +100,7 @@ class PeopleViewController: UIViewController {
             }
             switch section {
             case .users:
-                return self.configure(collectionView: collectionView, cellType: NearbyPeopleCell.self, with: nearbyPeople, for: indexPath)
+                return self.configure(collectionView: collectionView, cellType: UserCell.self, with: nearbyPeople, for: indexPath)
                 
             }
         })
@@ -102,8 +117,6 @@ class PeopleViewController: UIViewController {
             return sectionHeader
         }
     }
-    
-
     private func setupCollectionView() {
         
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
@@ -112,16 +125,9 @@ class PeopleViewController: UIViewController {
         
         view.addSubview(collectionView)
         
-        
-        collectionView.register(NearbyPeopleCell.self, forCellWithReuseIdentifier: NearbyPeopleCell.reuseId)
-        
         collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseId)
-        
-        
-        
-        
-        
-        
+        collectionView.register(UserCell.self, forCellWithReuseIdentifier: UserCell.reuseId)
+        collectionView.delegate = self
     }
     
     
@@ -137,9 +143,6 @@ class PeopleViewController: UIViewController {
             case .users:
                 return self.createUsersSections()
             }
-            
-            
-            
         }
         
         
@@ -191,12 +194,14 @@ class PeopleViewController: UIViewController {
     
     
 }
+extension PeopleViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let user = self.dataSource.itemIdentifier(for: indexPath) else { return }
+        let profileVC = ProfileViewController(user: user)
+        present(profileVC, animated: true)
 
-
-
-
-
-
+    }
+}
 
 
 

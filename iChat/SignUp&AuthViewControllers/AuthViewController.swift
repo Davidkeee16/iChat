@@ -96,18 +96,6 @@ class AuthViewController: UIViewController {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 import SwiftUI
 
 struct AuthVCProvider: PreviewProvider {

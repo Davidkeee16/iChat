@@ -10,10 +10,8 @@ import UIKit
 
 
 class ProfileCircle: UIView {
-    
-    let profileImage: UIImageView
-    /*
-    let profileImage: UIImageView = {
+
+    var profileImage: UIImageView = {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.image = UIImage(named: "ProfileImageAdd")
@@ -22,22 +20,16 @@ class ProfileCircle: UIView {
         image.layer.borderWidth = 1
         return image
     }()
-    */
-    let addImageButton: UIButton
-    /*
-    let addImageButton: UIButton = {
+    var addImageButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(named: "addImageCircle"), for: .normal)
         button.tintColor = .addImageButtonColor()
         return button
     }()
-    */
-    init(frame: CGRect, profileImage: UIImageView, addImageButton: UIButton) {
-        
-        self.profileImage = profileImage
-        self.addImageButton = addImageButton
-        
+    
+    
+    override init(frame: CGRect) {
         super.init(frame: frame)
         
         addSubview(profileImage)

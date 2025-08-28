@@ -37,18 +37,12 @@ class SignUpViewController: UIViewController {
     }
     
     
-    
-    
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .white
         setupView()
         buttonTargets()
-    }
-    deinit {
-        print("\(type(of: self)) deinitialized")
     }
     
     private func setupView() {

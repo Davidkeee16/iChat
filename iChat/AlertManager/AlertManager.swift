@@ -9,8 +9,6 @@ import UIKit
 
 
 class AlertManager {
-    
-    
     private static func showBasicAlert(on viewController: UIViewController,title: String, message: String?) {
     
         DispatchQueue.main.async {
@@ -24,12 +22,14 @@ class AlertManager {
     static func showAlert(on viewController: UIViewController, title: String, message: String) {
         self.showBasicAlert(on: viewController, title: title, message: message)
     }
+    
     static func successfulAlert(on viewController: UIViewController, completion: (() -> Void)?) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: "Succesful", message: "Your information updated", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
                 completion?()
             })
+            viewController.present(alert, animated: true)
         }
     }
     

@@ -5,14 +5,13 @@
 //  Created by David Puksanskis on 16/06/2025.
 //
 
-import UIKit
+
 import FirebaseAuth
 import FirebaseFirestore
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
-    
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -21,8 +20,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         self.setupWindow(with: scene)
         self.checkAuthentication()
-        
-        
     }
     private func setupWindow(with scene: UIScene) {
         
@@ -32,23 +29,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func checkAuthentication() {
-        guard let authedUser = Auth.auth().currentUser else {
-            let vc = AuthViewController()
-            vc.modalPresentationStyle = .fullScreen
-            window?.rootViewController = vc
-            return
-        }
-        FirebaseStorage.shared.checkIfUserHaveRequiedInfo(currentUser: authedUser) { allGood in
-            if allGood {
-                let tabBar = MainTabBarController()
-                tabBar.modalPresentationStyle = .fullScreen
-                self.window?.rootViewController = tabBar
-            } else {
-                let setupProfileVC = SetUpProfileViewController(currentUser: Auth.auth().currentUser!)
-                setupProfileVC.modalPresentationStyle = .fullScreen
-                self.window?.rootViewController = setupProfileVC
-                return
+        if let user = Auth.auth().currentUser {
+            FirestoreService.shared.getUserData(user: user) { result in
+                switch result {
+                case .success(let muser):
+                    let tabBar = MainTabBarController(currentUser: muser)
+                    tabBar.modalPresentationStyle = .fullScreen
+                    self.window?.rootViewController = tabBar
+                case .failure(_):
+                    let vc = AuthViewController()
+                    vc.modalPresentationStyle = .fullScreen
+                    self.window?.rootViewController = vc
+                    return
+                }
             }
+        } else {
+            self.window?.rootViewController = AuthViewController()
         }
     }
     
